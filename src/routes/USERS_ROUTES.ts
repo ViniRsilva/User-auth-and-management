@@ -3,6 +3,7 @@ import usersSchemas from "./schemas/users.ts";
 import { createUser, userLogin, IdParams } from "../interfaces/user.interface.ts";
 import UserActions from "../usecase/users/UserActions.ts";
 import { validPassword } from "../utils/passwords.ts";
+import { signJwt } from "../utils/jwt.ts";
 
 const USERS_ROUTES: FastifyPluginAsync = async (fastify, options) => {
   const userActions = new UserActions();
@@ -13,13 +14,20 @@ const USERS_ROUTES: FastifyPluginAsync = async (fastify, options) => {
       const user = await userActions.getByEmail(email);
       const userHashPassword = user?.password;
 
-      if (!user || (await validPassword(password, userHashPassword))) {
+      if (!user || !(await validPassword(password, userHashPassword))) {
         return reply.status(401).send({
           error: true,
           message: "Email ou senha inválidos!",
           data: null,
         });
       }
+
+      const tokenJwt = signJwt(user.id);
+      return {
+        error: false,
+        message: "Login realizado com sucesso!",
+        data: { token: tokenJwt },
+      };
     } catch (e) {
       console.log(e);
       if (e instanceof Error) {

@@ -4,7 +4,7 @@ export function verifyJwt(token: string) {
   try {
     const JTW_SECRET = "edgfv7erygf776r34";
     const decoded = jsonwebtoken.verify(token, JTW_SECRET);
-    return { auth: true, idUser: decoded.id };
+    return { auth: true, idUser: decoded };
   } catch (e) {
     return { auth: false, idUser: null };
   }
