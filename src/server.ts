@@ -5,6 +5,10 @@ const fastify = Fastify({
   logger: true,
 });
 
+for (const { route, prefix } of getAllRoutes()) {
+  await fastify.register(route, { prefix: prefix ?? null });
+}
+
 export default function bootstrap() {
   try {
     fastify.listen({ port: 3000 }, () => {
@@ -15,10 +19,4 @@ export default function bootstrap() {
     console.log(e);
     process.exit(1);
   }
-}
-
-const router = getAllRoutes();
-
-for (const { route, prefix } of router) {
-  fastify.register(route, { prefix: prefix ?? null });
 }

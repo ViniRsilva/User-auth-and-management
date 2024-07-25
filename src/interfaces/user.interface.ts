@@ -13,3 +13,11 @@ export interface createUser {
   password: string;
   nivel: number;
 }
+export interface userLogin {
+  email: string;
+  password: string;
+}
+
+export interface IdParams {
+  id: string;
+}

@@ -26,6 +26,10 @@ export default class UserActions {
     return await this.#userRepository.getById(id);
   }
 
+  async getByEmail(email: string): Promise<user | null> {
+    return await this.#userRepository.getByEmail(email);
+  }
+
   async update(id: string, data: createUser): Promise<user | null> {
     return await this.#userRepository.update(id, data);
   }

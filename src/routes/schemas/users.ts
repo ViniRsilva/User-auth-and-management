@@ -2,14 +2,31 @@ const usersSchemas = {
   "/users": {
     type: "object",
     properties: {
-      nome: { type: String },
-      email: { type: String, format: "email" },
-      password: { type: String },
-      nivel: { type: Number },
+      nome: { type: "string" },
+      email: { type: "string", format: "email" },
+      password: { type: "string" },
+      nivel: { type: "number" },
     },
     required: ["nome", "email", "password", "nivel"],
     additionalProperties: false,
-  },
+  } as const,
+  "/login": {
+    type: "object",
+    properties: {
+      email: { type: "string" },
+      password: { type: "string" },
+    },
+    required: ["email", "password"],
+    additionalProperties: false,
+  } as const,
+  "/users/:id": {
+    type: "object",
+    properties: {
+      id: { type: "string" },
+    },
+    required: ["id"],
+    additionalProperties: false,
+  } as const,
 };
 
 export default usersSchemas;
