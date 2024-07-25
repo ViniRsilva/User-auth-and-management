@@ -2,12 +2,12 @@ const usersSchemas = {
   "/users": {
     type: "object",
     properties: {
-      nome: { type: "string" },
+      name: { type: "string" },
       email: { type: "string", format: "email" },
       password: { type: "string" },
       nivel: { type: "number" },
     },
-    required: ["nome", "email", "password", "nivel"],
+    required: ["name", "email", "password", "nivel"],
     additionalProperties: false,
   } as const,
   "/login": {

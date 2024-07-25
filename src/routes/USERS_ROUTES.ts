@@ -34,7 +34,7 @@ const USERS_ROUTES: FastifyPluginAsync = async (fastify, options) => {
   });
   //
   //CRUD Users
-  fastify.post<{ Body: createUser }>("/users", async (req, reply) => {
+  fastify.post<{ Body: createUser }>("/users", { schema: { body: usersSchemas["/users"] } }, async (req, reply) => {
     try {
       const { name, email, password, nivel } = req.body;
       const user = await userActions.create({ name, email, password, nivel });
