@@ -42,7 +42,7 @@ const USERS_ROUTES: FastifyPluginAsync = async (fastify, options) => {
   });
   //
   //CRUD Users
-  fastify.post<{ Body: createUser }>("/users", { schema: { body: usersSchemas["/users"] } }, async (req, reply) => {
+  fastify.post<{ Body: createUser }>("/", { schema: { body: usersSchemas["/users"] } }, async (req, reply) => {
     try {
       const { name, email, password, nivel } = req.body;
       const user = await userActions.create({ name, email, password, nivel });
@@ -64,7 +64,7 @@ const USERS_ROUTES: FastifyPluginAsync = async (fastify, options) => {
     }
   });
 
-  fastify.get("/users", async (req, reply) => {
+  fastify.get("/", async (req, reply) => {
     try {
       const users = await userActions.getAll();
       return {
@@ -85,7 +85,7 @@ const USERS_ROUTES: FastifyPluginAsync = async (fastify, options) => {
     }
   });
 
-  fastify.get<{ Params: IdParams }>("/users/:id", { schema: { params: usersSchemas["/users/:id"] } }, async (req, reply) => {
+  fastify.get<{ Params: IdParams }>("/:id", { schema: { params: usersSchemas["/users/:id"] } }, async (req, reply) => {
     try {
       const { id } = req.params;
       const user = await userActions.getById(id);
@@ -115,7 +115,7 @@ const USERS_ROUTES: FastifyPluginAsync = async (fastify, options) => {
     }
   });
 
-  fastify.put<{ Params: IdParams; Body: createUser }>("/users/:id", { schema: { params: usersSchemas["/users/:id"] } }, async (req, reply) => {
+  fastify.put<{ Params: IdParams; Body: createUser }>("/:id", { schema: { params: usersSchemas["/users/:id"] } }, async (req, reply) => {
     try {
       const { id } = req.params;
       const { name, email, password, nivel } = req.body;
@@ -146,7 +146,7 @@ const USERS_ROUTES: FastifyPluginAsync = async (fastify, options) => {
       }
     }
   });
-  fastify.delete<{ Params: IdParams }>("/users/:id", { schema: { params: usersSchemas["/users/:id"] } }, async (req, reply) => {
+  fastify.delete<{ Params: IdParams }>("/:id", { schema: { params: usersSchemas["/users/:id"] } }, async (req, reply) => {
     try {
       const { id } = req.params;
       const isDeleted = await userActions.delete(id);
