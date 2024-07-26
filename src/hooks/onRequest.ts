@@ -19,8 +19,6 @@ export default async function onRequest(req: FastifyRequestCustom, reply: Fastif
   }
 
   const [barrer, token] = req.headers["authorization"]?.split(" ") || [];
-  console.log("🚀 ~ onRequest ~ token:", token);
-  console.log("🚀 ~ onRequest ~ barrer:", barrer);
   if (!barrer || !token) {
     reply.status(401).send({ error: true, message: "Token de autenticação não encontrado!" });
     return;
