@@ -1,6 +1,6 @@
 import Fastify from "fastify";
 import getAllRoutes from "./routes/routes.ts";
-
+import onRequest from "./hooks/onRequest.ts";
 const fastify = Fastify({
   logger: true,
 });
@@ -8,6 +8,8 @@ const fastify = Fastify({
 for (const { route, prefix } of getAllRoutes()) {
   await fastify.register(route, { prefix: prefix ?? null });
 }
+
+fastify.addHook("onRequest", onRequest);
 
 export default function bootstrap() {
   try {

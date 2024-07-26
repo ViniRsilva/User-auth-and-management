@@ -1,11 +1,11 @@
-import { FastifyInstance, FastifyRequest, FastifyReply, FastifyPluginAsync } from "fastify";
+import { FastifyInstance, FastifyRequest, FastifyPluginAsync } from "fastify";
 import usersSchemas from "./schemas/users.ts";
 import { createUser, userLogin, IdParams } from "../interfaces/user.interface.ts";
 import UserActions from "../usecase/users/UserActions.ts";
 import { validPassword } from "../utils/passwords.ts";
 import { signJwt } from "../utils/jwt.ts";
 
-const USERS_ROUTES: FastifyPluginAsync = async (fastify, options) => {
+const USERS_ROUTES: FastifyPluginAsync<{}> = async function (fastify: FastifyInstance, options) {
   const userActions = new UserActions();
   //Authentication
   fastify.post<{ Body: userLogin }>("/login", { schema: { body: usersSchemas["/login"] } }, async (req, reply) => {
@@ -178,7 +178,17 @@ const USERS_ROUTES: FastifyPluginAsync = async (fastify, options) => {
   });
 
   // //Private Rotes
-  // fastify.get("users/report", (req, reply) => {});
+  fastify.get("/report", (req, reply) => {
+    return {
+      error: false,
+      message: "Relatório de usuários",
+      data: {
+        totalUsers: 100,
+        activeUsers: 80,
+        inactiveUsers: 20,
+      },
+    };
+  });
   // fastify.get("users/requests", (req, reply) => {});
 };
 export default USERS_ROUTES;

@@ -1,10 +1,11 @@
 import jsonwebtoken from "jsonwebtoken";
+import { jwtPayloadInterface } from "../interfaces/jwtPayloadInterface.ts";
 
 export function verifyJwt(token: string) {
   try {
     const JTW_SECRET = "edgfv7erygf776r34";
-    const decoded = jsonwebtoken.verify(token, JTW_SECRET);
-    return { auth: true, idUser: decoded };
+    const decoded = jsonwebtoken.verify(token, JTW_SECRET) as jwtPayloadInterface;
+    return { auth: true, jwtPayLoad: decoded };
   } catch (e) {
     return { auth: false, idUser: null };
   }
