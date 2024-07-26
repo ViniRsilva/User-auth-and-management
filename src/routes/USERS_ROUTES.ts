@@ -123,7 +123,6 @@ const USERS_ROUTES: FastifyPluginAsync<{}> = async function (fastify: FastifyIns
     try {
       const { id } = req.params;
       const { name, email, password, nivel } = req.body;
-
       const isUpdated = await userActions.update(id, { name, email, password, nivel });
 
       if (!isUpdated) {

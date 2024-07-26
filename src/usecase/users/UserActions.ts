@@ -31,10 +31,11 @@ export default class UserActions {
     return await this.#userRepository.getByEmail(email);
   }
 
-  async update(id: string, data: createUser): Promise<user | null> {
+  async update(id: string, { name, email, password, nivel }: createUser): Promise<user | null> {
     const user = await this.#userRepository.getById(id);
     if (!user) return null;
-    return await this.#userRepository.update(id, data);
+    password = await createHashPassword(password);
+    return await this.#userRepository.update(id, { name, email, password, nivel });
   }
 
   async delete(id: string): Promise<user | null> {
