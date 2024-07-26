@@ -7,34 +7,44 @@ import { FastifyRequestCustom } from "../interfaces/customFastifyRequest.ts";
 import logRequest from "./logRequest.ts";
 
 export default async function onRequest(req: FastifyRequestCustom, reply: FastifyReply) {
-  let { url } = req;
-  const { params } = req as Params;
-  const { query } = req as Params;
+  try {
+    let { url } = req;
+    const { params } = req as Params;
+    const { query } = req as Params;
 
-  url = removePathParamsUrl(url, params);
-  url = removeQueryParamsUrl(url, query);
+    url = removePathParamsUrl(url, params);
+    url = removeQueryParamsUrl(url, query);
 
-  const publicRoutes = getPublicRoutes();
-  if (publicRoutes.includes(url)) {
-    await logRequest(req, url);
-    return;
-  }
+    const publicRoutes = getPublicRoutes();
+    if (publicRoutes.includes(url)) {
+      await logRequest(req, url);
+      return;
+    }
 
-  const [barrer, token] = req.headers["authorization"]?.split(" ") || [];
-  if (!barrer || !token) {
-    reply.status(401).send({ error: true, message: "Token de autenticação não encontrado!" });
-    return;
-  }
+    const [barrer, token] = req.headers["authorization"]?.split(" ") || [];
+    if (!barrer || !token) {
+      reply.status(401).send({ error: true, message: "Token de autenticação não encontrado!" });
+      return;
+    }
 
-  const { auth, jwtPayLoad } = verifyJwt(token);
-  if (!auth) {
-    return reply.status(401).send({
-      error: true,
-      message: "Token inválido!",
-      data: null,
-    });
-  } else {
-    req.idUser = jwtPayLoad?.id;
-    await logRequest(req, url);
+    const { auth, jwtPayLoad } = verifyJwt(token);
+    if (!auth) {
+      return reply.status(401).send({
+        error: true,
+        message: "Token inválido!",
+        data: null,
+      });
+    } else {
+      req.idUser = jwtPayLoad?.id;
+      await logRequest(req, url);
+    }
+  } catch (e) {
+    console.error(e);
+    if (e instanceof Error)
+      return reply.status(500).send({
+        error: true,
+        message: "Erro interno no servidor!",
+        errorObj: { ...e },
+      });
   }
 }
