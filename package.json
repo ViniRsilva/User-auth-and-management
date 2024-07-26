@@ -14,12 +14,14 @@
     "@prisma/client": "^5.17.0",
     "bcrypt": "^5.1.1",
     "fastify": "^4.28.1",
+    "json2csv": "^6.0.0-alpha.2",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^5.17.0",
     "tsx": "^4.16.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/json2csv": "^5.0.7",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.14.11",
     "json-schema-to-ts": "^3.1.0",

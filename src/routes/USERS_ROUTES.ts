@@ -4,6 +4,8 @@ import { createUser, userLogin, IdParams } from "../interfaces/user.interface.ts
 import UserActions from "../usecase/users/UserActions.ts";
 import { validPassword } from "../utils/passwords.ts";
 import { signJwt } from "../utils/jwt.ts";
+import { FastifyRequestCustom } from "../interfaces/customFastifyRequest.ts";
+import { parse } from "json2csv";
 
 const USERS_ROUTES: FastifyPluginAsync<{}> = async function (fastify: FastifyInstance, options) {
   const userActions = new UserActions();
@@ -178,16 +180,37 @@ const USERS_ROUTES: FastifyPluginAsync<{}> = async function (fastify: FastifyIns
   });
 
   // //Private Rotes
-  fastify.get("/report", (req, reply) => {
-    return {
-      error: false,
-      message: "Relatório de usuários",
-      data: {
-        totalUsers: 100,
-        activeUsers: 80,
-        inactiveUsers: 20,
-      },
-    };
+  fastify.get("/report", async (req: FastifyRequestCustom, reply) => {
+    try {
+      const { idUser } = req;
+      const user = await userActions.getById(idUser);
+      const nivel = user?.nivel;
+
+      // Only admin can generate report.
+      if (nivel && nivel < 4) {
+        return reply.status(403).send({
+          error: true,
+          message: "Você não possui permissão para gerar relatório!",
+          data: null,
+        });
+      }
+
+      const users = await userActions.getAll();
+      const csv = parse(users, { fields: ["id", "name", "email"] });
+      reply.header("Content-type", "text/csv");
+      reply.header("Content-Disposition", "attachment; filename= users.csv");
+      reply.send(csv);
+    } catch (e) {
+      console.log(e);
+      if (e instanceof Error) {
+        return reply.status(500).send({
+          error: true,
+          message: e.message,
+          errorObj: { ...e },
+          data: null,
+        });
+      }
+    }
   });
   // fastify.get("users/requests", (req, reply) => {});
 };

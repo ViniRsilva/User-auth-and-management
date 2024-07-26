@@ -22,7 +22,8 @@ export default class UserActions {
     return await this.#userRepository.getAll();
   }
 
-  async getById(id: string): Promise<user | null> {
+  async getById(id: string | undefined): Promise<user | null> {
+    if (id === undefined) return null;
     return await this.#userRepository.getById(id);
   }
 
@@ -31,10 +32,14 @@ export default class UserActions {
   }
 
   async update(id: string, data: createUser): Promise<user | null> {
+    const user = await this.#userRepository.getById(id);
+    if (!user) return null;
     return await this.#userRepository.update(id, data);
   }
 
   async delete(id: string): Promise<user | null> {
+    const user = await this.#userRepository.getById(id);
+    if (!user) return null;
     return await this.#userRepository.delete(id);
   }
 }

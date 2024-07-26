@@ -3,7 +3,7 @@ export interface user {
   name: string;
   email: string;
   password: string;
-  nivel: Number;
+  nivel: number;
   createAt: Date;
 }
 
