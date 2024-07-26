@@ -4,7 +4,7 @@ const routes = [
   {
     route: USERS_ROUTES,
     prefix: "/v1/users",
-    public: ["/v1/users/login", "/v1/users/", "/v1/users/:id"],
+    public: ["/v1/users/login", "/v1/users", "/v1/users/:id"],
   },
 ];
 

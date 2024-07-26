@@ -4,7 +4,8 @@ import { Params } from "../interfaces/routes.interfaces.ts";
 import { getPublicRoutes } from "../routes/routes.ts";
 import { verifyJwt } from "../utils/jwt.ts";
 import { FastifyRequestCustom } from "../interfaces/customFastifyRequest.ts";
-import { jwtPayloadInterface } from "../interfaces/jwtPayloadInterface.ts";
+import logRequest from "./logRequest.ts";
+
 export default async function onRequest(req: FastifyRequestCustom, reply: FastifyReply) {
   let { url } = req;
   const { params } = req as Params;
@@ -15,6 +16,7 @@ export default async function onRequest(req: FastifyRequestCustom, reply: Fastif
 
   const publicRoutes = getPublicRoutes();
   if (publicRoutes.includes(url)) {
+    await logRequest(req, url);
     return;
   }
 
@@ -32,6 +34,7 @@ export default async function onRequest(req: FastifyRequestCustom, reply: Fastif
       data: null,
     });
   } else {
+    await logRequest(req, url);
     req.idUser = jwtPayLoad?.idUser;
   }
 }
