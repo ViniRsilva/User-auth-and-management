@@ -34,7 +34,7 @@ export default async function onRequest(req: FastifyRequestCustom, reply: Fastif
       data: null,
     });
   } else {
+    req.idUser = jwtPayLoad?.id;
     await logRequest(req, url);
-    req.idUser = jwtPayLoad?.idUser;
   }
 }
