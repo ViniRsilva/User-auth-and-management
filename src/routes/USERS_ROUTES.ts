@@ -1,7 +1,8 @@
-import { FastifyInstance, FastifyRequest, FastifyPluginAsync } from "fastify";
+import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import usersSchemas from "./schemas/users.ts";
 import { createUser, userLogin, IdParams } from "../interfaces/user.interface.ts";
 import UserActions from "../usecase/users/UserActions.ts";
+import LogRequestActions from "../usecase/logRequest/logRequestActions.ts";
 import { validPassword } from "../utils/passwords.ts";
 import { signJwt } from "../utils/jwt.ts";
 import { FastifyRequestCustom } from "../interfaces/customFastifyRequest.ts";
@@ -9,6 +10,7 @@ import { parse } from "json2csv";
 
 const USERS_ROUTES: FastifyPluginAsync<{}> = async function (fastify: FastifyInstance, options) {
   const userActions = new UserActions();
+  const logRequestActions = new LogRequestActions();
   //Authentication
   fastify.post<{ Body: userLogin }>("/login", { schema: { body: usersSchemas["/login"] } }, async (req, reply) => {
     try {
@@ -212,6 +214,36 @@ const USERS_ROUTES: FastifyPluginAsync<{}> = async function (fastify: FastifyIns
       }
     }
   });
-  // fastify.get("users/requests", (req, reply) => {});
+
+  fastify.get("/requests", async (req: FastifyRequestCustom, reply) => {
+    try {
+      const { idUser } = req;
+      const user = await userActions.getById(idUser);
+      const nivel = user?.nivel;
+      if (nivel && nivel < 4) {
+        return reply.status(403).send({
+          error: true,
+          message: "Você não possui permissão para gerar solicitações!",
+          data: null,
+        });
+      }
+
+      const logs = await logRequestActions.getAll();
+      const csv = parse(logs);
+      reply.header("Content-type", "text/csv");
+      reply.header("Content-disposition", "attachment; filename=logs.csv");
+      return reply.send(csv);
+    } catch (e) {
+      console.log(e);
+      if (e instanceof Error) {
+        return reply.status(500).send({
+          error: true,
+          message: e.message,
+          errorObj: { ...e },
+          data: null,
+        });
+      }
+    }
+  });
 };
 export default USERS_ROUTES;
